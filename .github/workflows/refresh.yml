@@ -1,0 +1,42 @@
+name: 공고 갱신
+
+on:
+  schedule:
+    - cron: "47 21 * * *"   # 매일 06:47 (한국 시간)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      JOBS_DATA_DIR: data
+      JOBS_CACHE_DIR: .cache
+      COLLECT_UA: "Mozilla/5.0 (compatible; LegalComplianceJobsBot/1.0; +https://github.com/seolyeon04/legal-compliance-jobs)"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install beautifulsoup4==4.12.3 lxml==5.3.0
+      - name: 공고 수집
+        run: python scripts/collect.py
+      - name: 기업정보 추가 (새 기업 최대 150곳)
+        run: python scripts/companies.py 150
+      - name: 수집 결과 점검
+        run: python scripts/check.py
+      - name: 변경 사항 저장
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
+          git commit -m "data: 공고 갱신 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M')"
+          git push

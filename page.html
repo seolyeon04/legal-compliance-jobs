@@ -1,0 +1,1188 @@
+<title>법무 채용 레이더</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 모바일은 한 줄 카드 목록 + 하단 탭, 데스크톱은 왼쪽 필터 패널 + 오른쪽 결과 */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface-2:#eef1f5; --line:#dde2e9; --line-strong:#c5ccd6;
+  --ink:#16202e; --ink-2:#4a5566; --ink-3:#7a8494;
+  --accent:#1f4fd1; --accent-ink:#ffffff; --accent-soft:#e6ecfc;
+  --law:#3b4fc4; --law-soft:#e8ebfb; --comp:#0e7c6b; --comp-soft:#e1f4f0;
+  --pat:#a35a00; --pat-soft:#fbefdc; --aud:#8a3a8f; --aud-soft:#f5e7f5;
+  --hot:#c62f2f; --hot-soft:#fbe6e4; --warn:#a86200; --warn-soft:#fcefd9; --ok:#1d7a3e; --ok-soft:#e2f4e8;
+  --shadow:0 1px 2px rgba(22,32,46,.06),0 2px 8px rgba(22,32,46,.05);
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#171d26; --surface-2:#1f2732; --line:#2a3340; --line-strong:#3a4554;
+  --ink:#e6ebf2; --ink-2:#aab4c2; --ink-3:#7d8899;
+  --accent:#7a9bff; --accent-ink:#0f141b; --accent-soft:#1f2a47;
+  --law:#97a6ff; --law-soft:#232a4d; --comp:#5cd1bb; --comp-soft:#15332e;
+  --pat:#f0b25c; --pat-soft:#3a2a12; --aud:#e19be6; --aud-soft:#36203a;
+  --hot:#ff8a80; --hot-soft:#3d1d1c; --warn:#f2b35e; --warn-soft:#3a2a14; --ok:#6fd492; --ok-soft:#163322;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#171d26; --surface-2:#1f2732; --line:#2a3340; --line-strong:#3a4554;
+  --ink:#e6ebf2; --ink-2:#aab4c2; --ink-3:#7d8899;
+  --accent:#7a9bff; --accent-ink:#0f141b; --accent-soft:#1f2a47;
+  --law:#97a6ff; --law-soft:#232a4d; --comp:#5cd1bb; --comp-soft:#15332e;
+  --pat:#f0b25c; --pat-soft:#3a2a12; --aud:#e19be6; --aud-soft:#36203a;
+  --hot:#ff8a80; --hot-soft:#3d1d1c; --warn:#f2b35e; --warn-soft:#3a2a14; --ok:#6fd492; --ok-soft:#163322;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* 상단 바 */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.brand b{font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.brand small{color:var(--ink-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:2px;margin-left:auto}
+.tab{border:0;background:none;padding:8px 12px;border-radius:8px;color:var(--ink-2);font-weight:500;font-size:14px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tab:hover{background:var(--surface-2)}
+.tab[aria-current="page"]{color:var(--accent);background:var(--accent-soft);font-weight:600}
+.tab svg{width:18px;height:18px;flex:none}
+.tab .cnt{font-family:var(--f-mono);font-size:11px;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:0 6px;line-height:16px}
+.syncpill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:99px;padding:2px 8px;white-space:nowrap}
+.syncpill.on{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+
+/* 하단 탭 (모바일) */
+.bottom{display:none}
+@media (max-width:760px){
+  .top .tabs{display:none}
+  .bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);
+    padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  .bottom .tab{flex:1;flex-direction:column;gap:2px;font-size:11px;padding:6px 2px;position:relative}
+  .bottom .tab .cnt{position:absolute;top:0;right:calc(50% - 22px)}
+  main{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important}
+  .brand small{display:none}
+}
+
+main{max-width:1240px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.view[hidden]{display:none!important}
+h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;margin:0}
+h2{font-size:20px;font-weight:700}
+.sub{color:var(--ink-3);font-size:13px}
+
+/* 공통 컨트롤 */
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:7px 12px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;background:none;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{width:16px;height:16px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 11px;font-size:13px;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip:hover{border-color:var(--line-strong)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.chip .n{font-family:var(--f-mono);font-size:11px;opacity:.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label,.flabel{font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.02em}
+input[type=search],input[type=text],select,textarea{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:8px 10px;font-size:14px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-size:14px;z-index:60;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+
+/* 공고 화면 */
+.searchbar{display:flex;gap:8px;align-items:center}
+.searchbox{position:relative;flex:1;min-width:0}
+.searchbox svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--ink-3)}
+.searchbox input{padding:11px 12px 11px 38px;font-size:15px;border-radius:10px}
+.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.gbtn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.gbtn b{font-size:15px;font-weight:600}
+.gbtn span{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.gbtn[aria-pressed="true"]{border-color:var(--gc);background:var(--gs);box-shadow:inset 0 0 0 1px var(--gc)}
+.gbtn[aria-pressed="true"] b{color:var(--gc)}
+@media (max-width:520px){.groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.g-law{--gc:var(--law);--gs:var(--law-soft)} .g-comp{--gc:var(--comp);--gs:var(--comp-soft)}
+.g-pat{--gc:var(--pat);--gs:var(--pat-soft)} .g-aud{--gc:var(--aud);--gs:var(--aud-soft)}
+.roles{margin-top:10px}
+@media (max-width:760px){.roles{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}.roles::-webkit-scrollbar{display:none}}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;margin-top:16px;align-items:start}
+.filters{position:sticky;top:calc(70px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;max-height:calc(100vh - 90px);overflow:auto}
+.filters .head{display:flex;justify-content:space-between;align-items:center}
+.filters .head b{font-size:15px}
+.fbtn{display:none}
+.sheet-close{display:none}
+@media (max-width:960px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .fbtn{display:inline-flex}
+  .filters{position:fixed;inset:auto 0 0 0;top:auto;z-index:50;max-height:82vh;border-radius:16px 16px 0 0;
+    padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+    transform:translateY(105%);transition:transform .22s ease;box-shadow:0 -8px 30px rgba(0,0,0,.18)}
+  .filters.open{transform:none}
+  .sheet-close{display:inline-flex}
+  .scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:45}
+}
+@media (prefers-reduced-motion:reduce){.filters{transition:none}}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2)}
+.toggle input{width:16px;height:16px;accent-color:var(--accent)}
+.resbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.resbar .count{font-size:15px;font-weight:600}
+.resbar .count .num{color:var(--accent)}
+.resbar .sp{flex:1}
+.resbar select{width:auto}
+.active{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.active .chip{background:var(--surface-2);border-color:transparent;color:var(--ink)}
+.active .chip button{border:0;background:none;padding:0;color:var(--ink-3);line-height:1;font-size:15px}
+.list{display:flex;flex-direction:column;gap:10px}
+.more{display:flex;justify-content:center;margin-top:14px}
+
+/* 공고 카드 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);min-width:0}
+.card-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;border-radius:6px;padding:2px 7px;background:var(--gs);color:var(--gc);white-space:nowrap}
+.tag{font-size:12px;border-radius:6px;padding:2px 7px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.dday{font-family:var(--f-mono);font-size:12px;font-weight:600;border-radius:6px;padding:2px 7px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.dday.hot{background:var(--hot-soft);color:var(--hot)} .dday.warn{background:var(--warn-soft);color:var(--warn)}
+.star{margin-left:auto;border:0;background:none;padding:4px;border-radius:8px;color:var(--ink-3);display:flex}
+.star:hover{background:var(--surface-2)}
+.star svg{width:22px;height:22px}
+.star[aria-pressed="true"]{color:#e0a100}
+.card h3{font-size:16px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+.card h3 a{text-decoration:none}
+.card h3 a:hover{text-decoration:underline;text-underline-offset:3px}
+.corp{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px}
+.corp button{border:0;background:none;padding:0;font-weight:500;color:var(--ink);text-align:left}
+.corp button:hover{text-decoration:underline}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--ink-2)}
+.meta span{white-space:nowrap}
+.cinfo{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:7px 10px}
+.cinfo b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-size:12.5px}
+.card-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3)}
+.src{font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;text-decoration:none;color:var(--ink-2);white-space:nowrap}
+.src:hover{border-color:var(--ink-3);color:var(--ink)}
+.card-foot .sp{flex:1}
+.ai-out{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px;font-size:13.5px;color:var(--ink)}
+.ai-out ul{margin:4px 0 0;padding-left:18px}
+.ai-out .lbl{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+.empty{border:1px dashed var(--line-strong);border-radius:12px;padding:28px 18px;text-align:center;color:var(--ink-2);background:var(--surface)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.note{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* 캘린더 */
+.cal-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cal-head h2{min-width:120px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line);gap:1px}
+.cal .dow{background:var(--surface-2);font-size:12px;font-weight:600;color:var(--ink-3);text-align:center;padding:6px 0}
+.cal .dow:first-child{color:var(--hot)}
+.day{background:var(--surface);min-height:92px;padding:6px;border:0;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0}
+.day.out{background:var(--bg);color:var(--ink-3)}
+.day .d{font-family:var(--f-mono);font-size:12px;font-weight:600}
+.day.today .d{background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:0 6px;align-self:flex-start}
+.day[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
+.day .ev{font-size:11px;border-radius:4px;padding:1px 5px;background:var(--gs);color:var(--gc);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.day .ev.mine{font-weight:700}
+.day .moreev{font-size:11px;color:var(--ink-3)}
+.dots{display:none;gap:3px;flex-wrap:wrap}
+.dots i{width:6px;height:6px;border-radius:99px;background:var(--gc)}
+@media (max-width:640px){
+  .day{min-height:54px;padding:4px}
+  .day .ev,.day .moreev{display:none}
+  .dots{display:flex}
+  .day .cnum{font-family:var(--f-mono);font-size:10px;color:var(--ink-3)}
+}
+@media (min-width:641px){.day .cnum{display:none}}
+.agenda{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.agenda h3{font-size:16px}
+
+/* 칸반 */
+.board{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.col{background:var(--surface-2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:180px;scroll-snap-align:start;min-width:0}
+.col.drop{box-shadow:inset 0 0 0 2px var(--accent)}
+.col-h{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px;padding:2px 4px}
+.col-h .num{font-size:12px;color:var(--ink-3);margin-left:auto}
+.col-h i{width:8px;height:8px;border-radius:99px;background:var(--cc)}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;cursor:grab;box-shadow:var(--shadow)}
+.kcard.dragging{opacity:.5}
+.kcard .t{font-size:14px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.kcard .c{font-size:12.5px;color:var(--ink-2)}
+.kcard .memo{font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-radius:6px;padding:5px 7px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:60px;overflow:hidden}
+.kcard .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kcard .mv{margin-left:auto;display:flex;gap:2px}
+.kcard .mv button{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:28px;height:26px;display:flex;align-items:center;justify-content:center;padding:0;color:var(--ink-2)}
+.kcard .mv button:disabled{opacity:.35}
+.outcome{font-size:11.5px;font-weight:600;border-radius:6px;padding:1px 6px}
+.outcome.pass{background:var(--ok-soft);color:var(--ok)} .outcome.fail{background:var(--hot-soft);color:var(--hot)} .outcome.wait{background:var(--surface-2);color:var(--ink-2)}
+@media (max-width:760px){.board{grid-template-columns:repeat(5,minmax(78%,1fr))}}
+
+/* 상세 패널 */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:55;box-shadow:-10px 0 30px rgba(0,0,0,.18);display:flex;flex-direction:column;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) 18px;gap:14px;overflow:auto}
+.drawer .x{align-self:flex-end}
+.steps{display:flex;gap:4px;flex-wrap:wrap}
+.steps button{flex:1;min-width:64px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 4px;font-size:13px}
+.steps button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* 기업정보 */
+.ctools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.ctools .searchbox{max-width:360px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--ink-3);font-weight:600;background:var(--surface-2);position:sticky;top:0}
+th button{border:0;background:none;padding:0;font:inherit;color:inherit;display:inline-flex;gap:4px;align-items:center}
+th button[aria-sort]{color:var(--accent)}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td .cname{border:0;background:none;padding:0;font-weight:600;text-align:left}
+td .cname:hover{text-decoration:underline}
+tr:last-child td{border-bottom:0}
+.muted{color:var(--ink-3)}
+.ccards{display:none}
+@media (max-width:640px){
+  .tablewrap{display:none}
+  .ccards{display:flex;flex-direction:column;gap:10px}
+}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.ccard .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;font-size:13px}
+.ccard .grid span{color:var(--ink-3)}
+.ccard .grid b{font-family:var(--f-mono);font-weight:600;display:block;color:var(--ink)}
+
+/* 알림 */
+.alerts{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+@media (max-width:900px){.alerts{grid-template-columns:minmax(0,1fr)}}
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.scard .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.newb{font-family:var(--f-mono);font-size:12px;font-weight:600;background:var(--hot);color:#fff;border-radius:99px;padding:1px 8px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel h3{font-size:15px}
+.chan{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.chan b{font-size:14px}
+.chan .sp{flex:1}
+.pill{font-size:11px;border-radius:99px;padding:2px 8px;background:var(--surface-2);color:var(--ink-3);white-space:nowrap}
+.foot{margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
+.skel{height:132px;border-radius:12px;background:linear-gradient(90deg,var(--surface) 0%,var(--surface-2) 50%,var(--surface) 100%);background-size:200% 100%;animation:sh 1.2s infinite linear;border:1px solid var(--line)}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>법무 채용 레이더</b><small id="fresh">공고를 불러오는 중</small></div>
+    <nav class="tabs" id="tabsTop" aria-label="화면"></nav>
+    <span class="syncpill" id="sync" title="관심공고·지원현황·저장한 검색이 저장되는 곳">이 브라우저에 저장</span>
+  </div>
+</header>
+
+<main>
+  <!-- 공고 -->
+  <section class="view" id="v-jobs" aria-labelledby="h-jobs">
+    <h1 class="sr" id="h-jobs">채용공고</h1>
+    <div class="searchbar">
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="q" placeholder="회사명, 공고 제목, 키워드" aria-label="검색어" autocomplete="off">
+      </div>
+      <button class="btn fbtn" id="openFilters" type="button" aria-controls="filters">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>필터<span class="num" id="fcount"></span></button>
+    </div>
+    <div class="groups" id="groups" role="group" aria-label="직무 분야"></div>
+    <div class="roles chips" id="roles" role="group" aria-label="세부 직무"></div>
+    <div class="layout">
+      <aside class="filters" id="filters" aria-label="상세 필터">
+        <div class="head"><b>상세 필터</b>
+          <div style="display:flex;gap:4px"><button class="btn ghost sm" id="reset" type="button">초기화</button>
+          <button class="btn sm sheet-close" id="closeFilters" type="button">결과 보기</button></div></div>
+        <div class="field"><span class="flabel">사이트</span><div class="chips" id="f-source"></div></div>
+        <div class="field"><span class="flabel">등록일</span><div class="chips" id="f-posted"></div></div>
+        <div class="field"><span class="flabel">마감</span><div class="chips" id="f-deadline"></div></div>
+        <div class="field"><span class="flabel">경력</span><div class="chips" id="f-exp"></div></div>
+        <div class="field"><span class="flabel">지역</span><div class="chips" id="f-region"></div></div>
+        <div class="field"><span class="flabel">학력</span><div class="chips" id="f-edu"></div></div>
+        <div class="field"><span class="flabel">고용형태</span><div class="chips" id="f-emp"></div></div>
+        <div class="field"><span class="flabel">기업</span>
+          <label class="toggle"><input type="checkbox" id="f-withco">기업정보가 있는 공고만</label>
+          <label class="toggle"><input type="checkbox" id="f-multi">제목에 직무명이 없는 공고도 포함</label>
+        </div>
+        <div class="field" id="aiField"><span class="flabel">AI 직무 확인</span>
+          <button class="btn sm" type="button" id="aiBatch">분류 추정 공고 AI로 확인하기</button>
+          <span class="note" id="aiBatchNote"></span></div>
+        <p class="note">기본으로는 제목에 법무·컴플라이언스·특허·감사 관련 단어가 있는 공고만 보여줘요. 사이트 직무 분류로만 잡힌 공고(여러 직무 공채, 분류 추정)는 정확도가 낮아서 숨겨요.</p>
+      </aside>
+      <div class="results">
+        <div class="resbar">
+          <span class="count"><span class="num" id="rcount">0</span>건</span>
+          <span class="sp"></span>
+          <button class="btn sm" id="saveSearch" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>이 조건 저장</button>
+          <button class="btn sm" id="shareBtn" type="button">링크 복사</button>
+          <label class="sr" for="sort">정렬</label>
+          <select id="sort">
+            <option value="new">최신 등록순</option>
+            <option value="deadline">마감 임박순</option>
+            <option value="salary">평균연봉 높은순</option>
+            <option value="size">사원 수 많은순</option>
+          </select>
+        </div>
+        <div class="active" id="active"></div>
+        <div class="list" id="list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+        <div class="more"><button class="btn" id="moreBtn" type="button" hidden>더 보기</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 캘린더 -->
+  <section class="view" id="v-calendar" hidden aria-labelledby="h-cal">
+    <div class="cal-head">
+      <button class="btn sm" id="calPrev" type="button" aria-label="이전 달">‹</button>
+      <h2 id="h-cal" class="num">2026.11</h2>
+      <button class="btn sm" id="calNext" type="button" aria-label="다음 달">›</button>
+      <button class="btn ghost sm" id="calToday" type="button">오늘</button>
+      <span style="flex:1"></span>
+      <div class="chips" role="group" aria-label="표시할 공고">
+        <button class="chip" id="calMine" type="button" aria-pressed="false">관심공고만</button>
+        <button class="chip" id="calAll" type="button" aria-pressed="true">현재 검색 조건</button>
+      </div>
+    </div>
+    <div class="cal" id="cal"></div>
+    <div class="agenda" id="agenda"></div>
+  </section>
+
+  <!-- 지원현황 -->
+  <section class="view" id="v-board" hidden aria-labelledby="h-board">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <h2 id="h-board">지원 현황</h2>
+      <span class="sub">☆로 저장한 공고가 '관심'에 들어와요. 카드를 끌어서 옮기거나 화살표를 누르세요.</span>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <!-- 기업정보 -->
+  <section class="view" id="v-companies" hidden aria-labelledby="h-co">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+      <h2 id="h-co">기업정보</h2>
+      <span class="sub" id="coSub"></span>
+    </div>
+    <div class="ctools">
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="coQ" placeholder="회사명 또는 업종" aria-label="회사 검색">
+      </div>
+      <label class="sr" for="coSort">정렬</label>
+      <select id="coSort" style="width:auto">
+        <option value="revenue">매출액순</option><option value="avgSalary">평균연봉순</option>
+        <option value="employees">사원 수순</option><option value="jobCount">공고 수순</option><option value="years">업력순</option>
+      </select>
+    </div>
+    <div class="tablewrap"><table id="coTable"></table></div>
+    <div class="ccards" id="coCards"></div>
+    <p class="note" style="margin-top:10px" id="coNote"></p>
+  </section>
+
+  <!-- 알림 -->
+  <section class="view" id="v-alerts" hidden aria-labelledby="h-al">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <h2 id="h-al">저장한 검색</h2>
+      <span class="sub">공고 화면에서 '이 조건 저장'을 누르면 여기에 모여요.</span>
+    </div>
+    <div class="alerts">
+      <div class="list" id="searches"></div>
+      <aside class="panel">
+        <h3>새 공고 알림 받기</h3>
+        <p class="note" style="margin:0" id="refreshNote">공고는 매일 아침 자동으로 다시 수집돼요. 이 화면에 들어오면 마지막 확인 뒤로 새로 발견된 공고 수를 조건별로 보여줘요.</p>
+        <div class="chan"><b>앱 안에서 보기</b><span class="sp"></span><span class="pill" style="color:var(--ok);background:var(--ok-soft)">사용 중</span></div>
+        <div class="chan"><b>이메일</b><span class="sp"></span><span class="pill">준비 중</span></div>
+        <div class="chan"><b>텔레그램</b><span class="sp"></span><span class="pill">준비 중</span></div>
+        <div class="chan"><b>카카오톡</b><span class="sp"></span><span class="pill">비즈 채널 필요</span></div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="foot note" id="foot"></div>
+</main>
+
+<nav class="bottom" id="tabsBottom" aria-label="화면"></nav>
+<div id="layer"></div>
+
+<script>
+(() => {
+"use strict";
+// ---------------------------------------------------------------- 상수
+const GROUPS = [
+  {k:"법무", cls:"g-law", roles:["사내변호사","법무 일반","송무·소송","법무사·법률사무"]},
+  {k:"컴플라이언스", cls:"g-comp", roles:["준법감시","공정거래","개인정보보호","AML"]},
+  {k:"특허", cls:"g-pat", roles:["변리사","특허·IP","특허명세사","상표·디자인"]},
+  {k:"감사", cls:"g-aud", roles:["내부감사","내부통제","회계감사","IT감사"]},
+];
+const GCLS = Object.fromEntries(GROUPS.map(g => [g.k, g.cls]));
+const ALL_ROLES = GROUPS.flatMap(g => g.roles.map(r => ({group:g.k, role:r})));
+const STATUSES = [
+  {k:"interest", label:"관심", c:"var(--ink-3)"},
+  {k:"applied", label:"지원 완료", c:"var(--accent)"},
+  {k:"doc", label:"서류 합격", c:"var(--comp)"},
+  {k:"interview", label:"면접", c:"var(--pat)"},
+  {k:"result", label:"결과", c:"var(--aud)"},
+];
+const EXP_OPTS = [["new","신입"],["1-3","경력 1~3년"],["3-5","3~5년"],["5-10","5~10년"],["10+","10년 이상"],["any","경력무관"]];
+const POSTED_OPTS = [["all","전체"],["1","오늘"],["3","3일 이내"],["7","1주일 이내"]];
+const DEADLINE_OPTS = [["all","전체"],["3","3일 이내"],["7","1주일 이내"],["14","2주 이내"],["open","상시·채용시"]];
+const EDU_ORDER = ["학력무관","고졸","초대졸","대졸(4년)","석사","박사","미기재"];
+const EMP_ORDER = ["정규직","계약직","인턴","파견직","프리랜서","위촉직","아르바이트","미기재"];
+const PAGE = 30;
+const ICONS = {
+  jobs:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  board:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg>',
+  companies:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M15 9h3a2 2 0 0 1 2 2v10M3 21h18M8 7h3M8 11h3M8 15h3"/></svg>',
+  alerts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+};
+const VIEWS = [["jobs","공고"],["calendar","캘린더"],["board","지원현황"],["companies","기업정보"],["alerts","저장한 검색"]];
+const STAR_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+const STAR_ON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+
+// 공개 웹 배포판(<html data-mode="web">)에서는 claude.ai 전용 기능(AI, 계정 동기화)을 숨긴다
+const WEB = document.documentElement.dataset.mode === "web";
+
+// ---------------------------------------------------------------- 유틸
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => n == null ? "" : Number(n).toLocaleString("ko-KR");
+function kstToday(){ const d = new Date(Date.now() + 9*3600e3); return d.toISOString().slice(0,10); }
+const TODAY = kstToday();
+function dayDiff(a, b){ return Math.round((Date.parse(a+"T00:00:00Z") - Date.parse(b+"T00:00:00Z"))/864e5); }
+function addDays(iso, n){ const d = new Date(Date.parse(iso+"T00:00:00Z") + n*864e5); return d.toISOString().slice(0,10); }
+function ddayInfo(j){
+  if (!j.deadline) return {txt: j.deadlineRaw && /채용시|상시/.test(j.deadlineRaw) ? j.deadlineRaw.replace(/[()]/g,"") : "상시", cls:""};
+  const d = dayDiff(j.deadline, TODAY);
+  if (d < 0) return {txt:"마감", cls:""};
+  return {txt: d === 0 ? "D-day" : "D-"+d, cls: d <= 3 ? "hot" : d <= 7 ? "warn" : ""};
+}
+function eok(v){ if (v == null) return null; if (v >= 10000) return (v/10000).toFixed(v >= 100000 ? 0 : 1)+"조"; return fmt(Math.round(v))+"억"; }
+let toastT;
+function toast(msg){ const el = document.createElement("div"); el.className = "toast"; el.setAttribute("role","status"); el.textContent = msg;
+  document.querySelectorAll(".toast").forEach(t => t.remove()); document.body.append(el); clearTimeout(toastT); toastT = setTimeout(() => el.remove(), 2600); }
+function lsGet(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function hexEnc(s){ return Array.from(new TextEncoder().encode(s)).map(b => b.toString(16).padStart(2,"0")).join(""); }
+function hexDec(h){ const b = new Uint8Array((h.match(/../g)||[]).map(x => parseInt(x,16))); return new TextDecoder().decode(b); }
+function sid(){ return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ---------------------------------------------------------------- 상태
+let JOBS = [], COMPANIES = {}, META = {};
+const DEFAULT_F = () => ({q:"", groups:[], roles:[], sources:[], regions:[], exp:[], edu:[], emp:[], posted:"all", deadline:"all", withCo:false, multi:false, company:null, sort:"new"});
+let F = DEFAULT_F();
+let shown = PAGE;
+let view = "jobs";
+let calMonth = TODAY.slice(0,7), calMine = false, calDay = null;
+let coSort = "revenue", coQ = "";
+const aiCache = {};   // jobId -> 분석 결과
+let aiRoles = {};     // jobId -> role (AI 분류)
+
+// ---------------------------------------------------------------- 저장소 (db 동기화, 없으면 이 브라우저)
+const Store = {
+  mode: "local", uid: null, db: null, me: null,
+  saved: lsGet("ljr.saved", {}), searches: lsGet("ljr.searches", {}),
+  async init(){
+    try {
+      if (!window.claude?.use) return;
+      const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+      if (!db || !user) return;
+      const uid = await user.id();
+      if (!uid) return;
+      this.db = db; this.uid = uid; this.me = db.doc("data/users/" + uid + "/me");
+      const local = {saved: {...this.saved}, searches: {...this.searches}};
+      let first = true;
+      const timer = setTimeout(() => { if (first) { this.mode = "local"; renderSync(); } }, 10000);
+      this.me.collection("saved").onSnapshot(snap => {
+        const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); });
+        this.saved = o; this.mode = "sync"; clearTimeout(timer);
+        if (first) { first = false; this.migrate(local); }
+        renderSync(); onStoreChange();
+      }, () => { this.mode = "local"; renderSync(); });
+      this.me.collection("searches").onSnapshot(snap => {
+        const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); }); this.searches = o; onStoreChange();
+      }, () => {});
+      this.me.onSnapshot(snap => {
+        const d = snap.exists ? snap.data() : null;
+        if (d && d.aiRoles) { aiRoles = {...d.aiRoles}; onStoreChange(); }
+      }, () => {});
+    } catch (e) { this.mode = "local"; }
+  },
+  async migrate(local){
+    // 로그인 전에 이 브라우저에 저장했던 항목을 계정으로 옮긴다
+    for (const [id, v] of Object.entries(local.saved)) if (!this.saved[id]) await this.putSaved(id, v, true);
+    for (const [id, v] of Object.entries(local.searches)) if (!this.searches[id]) await this.putSearch(id, v, true);
+  },
+  async putSaved(id, v, quiet){
+    this.saved[id] = v; lsSet("ljr.saved", this.saved);
+    if (this.mode === "sync") { try { await this.me.collection("saved").doc(id).set(v); } catch (e) { if (!quiet) toast("계정에 저장하지 못했어요. 이 브라우저에는 저장됐어요."); } }
+  },
+  async delSaved(id){
+    delete this.saved[id]; lsSet("ljr.saved", this.saved);
+    if (this.mode === "sync") { try { await this.me.collection("saved").doc(id).delete(); } catch {} }
+  },
+  async putSearch(id, v, quiet){
+    this.searches[id] = v; lsSet("ljr.searches", this.searches);
+    if (this.mode === "sync") { try { await this.me.collection("searches").doc(id).set(v); } catch (e) { if (!quiet) toast("계정에 저장하지 못했어요. 이 브라우저에는 저장됐어요."); } }
+  },
+  async delSearch(id){
+    delete this.searches[id]; lsSet("ljr.searches", this.searches);
+    if (this.mode === "sync") { try { await this.me.collection("searches").doc(id).delete(); } catch {} }
+  },
+  async putAiRoles(){
+    lsSet("ljr.aiRoles", aiRoles);
+    if (this.mode === "sync") { try { await this.me.set({aiRoles}); } catch {} }
+  },
+};
+aiRoles = lsGet("ljr.aiRoles", {});
+function renderSync(){
+  const el = $("#sync");
+  if (Store.mode === "sync") { el.textContent = "계정에 동기화됨"; el.classList.add("on"); el.title = "관심공고·지원현황·저장한 검색이 계정에 저장돼서 다른 기기에서도 보여요"; }
+  else { el.textContent = "이 브라우저에 저장"; el.classList.remove("on"); el.title = WEB ? "관심공고·지원현황·저장한 검색은 이 브라우저에만 저장돼요" : "로그인한 상태로 열면 다른 기기와 동기화돼요"; }
+}
+function onStoreChange(){ renderTabs(); if (view === "jobs") renderList(false); else renderView(); }
+
+// ---------------------------------------------------------------- 데이터
+const NONE = "__none";
+function roleOf(j){ const a = aiRoles[j.id]; return a && a !== NONE ? a : j.role; }
+function groupOf(j){ const a = aiRoles[j.id]; if (a && a !== NONE) { const r = ALL_ROLES.find(x => x.role === a); if (r) return r.group; } return j.roleGroup; }
+function confident(j){ const a = aiRoles[j.id]; if (a === NONE) return false; if (a) return true; return !j.multi && !j.broad; }
+function compOf(j){ return j.companyId ? COMPANIES[j.companyId] : null; }
+function seenAt(j){ return Date.parse(j.firstSeen || "") || Date.parse((j.publishedAt || "1970-01-01") + "T00:00:00+09:00"); }
+function isNew(j){ const first = Date.parse(META.firstCollectedAt || META.collectedAt || "") || 0; const t = seenAt(j); return t > first + 36e5 && Date.now() - t < 3 * 864e5; }
+function expMatch(j, k){
+  const t = j.expType, m = j.expMin || 0;
+  if (k === "new") return t === "신입" || t === "신입·경력" || t === "경력무관";
+  if (k === "any") return t === "경력무관";
+  if (!(t === "경력" || t === "신입·경력")) return false;
+  if (m === 0) return true;
+  if (k === "10+") return m >= 10;
+  const [a, b] = k.split("-").map(Number);
+  return m >= a && m < b;
+}
+function filterJobs(f = F, opt = {}){
+  const q = f.q.trim().toLowerCase();
+  const terms = q ? q.split(/\s+/) : [];
+  return JOBS.filter(j => {
+    if (aiRoles[j.id] === NONE && !f.multi) return false;
+    if (!f.multi && !confident(j) && !opt.ignoreMulti) return false;
+    if (f.groups.length && !f.groups.includes(groupOf(j))) return false;
+    if (f.roles.length && !f.roles.includes(roleOf(j))) return false;
+    if (f.sources.length && !j.listings.some(l => f.sources.includes(l.source))) return false;
+    if (f.regions.length && !f.regions.includes(j.region)) return false;
+    if (f.exp.length && !f.exp.some(k => expMatch(j, k))) return false;
+    if (f.edu.length && !f.edu.includes(j.education)) return false;
+    if (f.emp.length && !j.employment.some(e => f.emp.includes(e))) return false;
+    if (f.withCo && !compOf(j)) return false;
+    if (f.company && j.companyId !== f.company) return false;
+    if (f.posted !== "all") { if (!j.publishedAt || dayDiff(TODAY, j.publishedAt) >= Number(f.posted)) return false; }
+    if (f.deadline !== "all") {
+      if (f.deadline === "open") { if (j.deadline) return false; }
+      else { if (!j.deadline) return false; const d = dayDiff(j.deadline, TODAY); if (d < 0 || d > Number(f.deadline)) return false; }
+    }
+    if (terms.length) {
+      const c = compOf(j);
+      const hay = (j.title + " " + j.company + " " + j.sectors.join(" ") + " " + roleOf(j) + " " + (c?.industry || "") + " " + j.regionRaw).toLowerCase();
+      if (!terms.every(t => hay.includes(t))) return false;
+    }
+    return true;
+  });
+}
+function sortJobs(list, how){
+  const by = {
+    new: (a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""),
+    deadline: (a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"),
+    salary: (a, b) => (compOf(b)?.avgSalary || 0) - (compOf(a)?.avgSalary || 0),
+    size: (a, b) => (compOf(b)?.employees || 0) - (compOf(a)?.employees || 0),
+  }[how] || (() => 0);
+  return list.slice().sort((a, b) => by(a, b) || (b.publishedAt || "").localeCompare(a.publishedAt || ""));
+}
+
+// ---------------------------------------------------------------- 탭/라우팅
+function renderTabs(){
+  const savedN = Object.keys(Store.saved).length;
+  const newN = Object.values(Store.searches).reduce((s, x) => s + newCount(x), 0);
+  const html = VIEWS.map(([k, label]) => {
+    const cnt = k === "board" && savedN ? `<span class="cnt">${savedN}</span>` : k === "alerts" && newN ? `<span class="cnt">${newN > 99 ? "99+" : newN}</span>` : "";
+    return `<button class="tab" type="button" data-view="${k}" ${view === k ? 'aria-current="page"' : ""}>${ICONS[k]}<span>${label}</span>${cnt}</button>`;
+  }).join("");
+  $("#tabsTop").innerHTML = html; $("#tabsBottom").innerHTML = html;
+}
+function go(v, push = true){
+  view = v;
+  document.querySelectorAll(".view").forEach(s => s.hidden = s.id !== "v-" + v);
+  renderTabs(); renderView();
+  if (push) setHash();
+  window.scrollTo(0, 0);
+}
+function setHash(){
+  let h = view;
+  if (view === "jobs") { const d = diffF(); if (Object.keys(d).length) h = "jobs-f" + hexEnc(JSON.stringify(d)); }
+  try { if (location.hash.slice(1) !== h) history.replaceState(null, "", "#" + h); } catch {}
+}
+function diffF(){ const d = {}, base = DEFAULT_F(); for (const k in F) if (JSON.stringify(F[k]) !== JSON.stringify(base[k])) d[k] = F[k]; return d; }
+function readHash(){
+  const h = location.hash.slice(1);
+  if (h.startsWith("jobs-f")) { try { F = {...DEFAULT_F(), ...JSON.parse(hexDec(h.slice(6)))}; } catch {} return "jobs"; }
+  return VIEWS.some(([k]) => k === h) ? h : "jobs";
+}
+function renderView(){
+  if (view === "jobs") renderJobs();
+  else if (view === "calendar") renderCalendar();
+  else if (view === "board") renderBoard();
+  else if (view === "companies") renderCompanies();
+  else if (view === "alerts") renderSearches();
+}
+
+// ---------------------------------------------------------------- 공고 화면
+function counts(key, f){
+  const base = {...F, [key]: key === "posted" || key === "deadline" ? "all" : []};
+  const list = filterJobs(base);
+  return list;
+}
+function chipRow(el, opts, selected, onToggle, cntFn){
+  el.innerHTML = opts.map(([v, label]) => {
+    const on = Array.isArray(selected) ? selected.includes(v) : selected === v;
+    const n = cntFn ? cntFn(v) : null;
+    return `<button class="chip" type="button" data-v="${esc(v)}" aria-pressed="${on}">${esc(label)}${n != null ? `<span class="n">${fmt(n)}</span>` : ""}</button>`;
+  }).join("");
+  el.onclick = e => { const b = e.target.closest("[data-v]"); if (b) onToggle(b.dataset.v); };
+}
+function toggleIn(arr, v){ const i = arr.indexOf(v); i >= 0 ? arr.splice(i, 1) : arr.push(v); }
+function changed(){ shown = PAGE; renderJobs(); setHash(); }
+
+function renderJobs(){
+  $("#q").value = F.q; $("#sort").value = F.sort;
+  $("#f-withco").checked = F.withCo; $("#f-multi").checked = F.multi;
+  // 분야 버튼
+  const gBase = filterJobs({...F, groups: [], roles: []});
+  $("#groups").innerHTML = GROUPS.map(g => {
+    const n = gBase.filter(j => groupOf(j) === g.k).length;
+    return `<button class="gbtn ${g.cls}" type="button" data-g="${g.k}" aria-pressed="${F.groups.includes(g.k)}"><b>${g.k}</b><span>${fmt(n)}건</span></button>`;
+  }).join("");
+  // 세부 직무
+  const showG = F.groups.length ? GROUPS.filter(g => F.groups.includes(g.k)) : GROUPS;
+  const rBase = filterJobs({...F, roles: []});
+  $("#roles").innerHTML = showG.flatMap(g => g.roles.map(r => {
+    const n = rBase.filter(j => roleOf(j) === r).length;
+    if (!n && !F.roles.includes(r)) return "";
+    return `<button class="chip" type="button" data-r="${esc(r)}" aria-pressed="${F.roles.includes(r)}">${esc(r)}<span class="n">${fmt(n)}</span></button>`;
+  })).join("");
+  // 상세 필터
+  const cnt = (key, test) => { const l = counts(key); return v => l.filter(j => test(j, v)).length; };
+  const sources = (META.sources || []).map(s => [s.name, s.name]);
+  chipRow($("#f-source"), sources, F.sources, v => { toggleIn(F.sources, v); changed(); }, cnt("sources", (j, v) => j.listings.some(l => l.source === v)));
+  chipRow($("#f-posted"), POSTED_OPTS, F.posted, v => { F.posted = v; changed(); });
+  chipRow($("#f-deadline"), DEADLINE_OPTS, F.deadline, v => { F.deadline = v; changed(); });
+  chipRow($("#f-exp"), EXP_OPTS, F.exp, v => { toggleIn(F.exp, v); changed(); }, cnt("exp", expMatch));
+  const regionCounts = {}; counts("regions").forEach(j => { regionCounts[j.region] = (regionCounts[j.region] || 0) + 1; });
+  const regions = Object.entries(regionCounts).sort((a, b) => b[1] - a[1]).map(([r]) => [r, r]);
+  F.regions.forEach(r => { if (!regionCounts[r]) regions.push([r, r]); });
+  chipRow($("#f-region"), regions, F.regions, v => { toggleIn(F.regions, v); changed(); }, v => regionCounts[v] || 0);
+  chipRow($("#f-edu"), EDU_ORDER.map(e => [e, e]), F.edu, v => { toggleIn(F.edu, v); changed(); }, cnt("edu", (j, v) => j.education === v));
+  chipRow($("#f-emp"), EMP_ORDER.map(e => [e, e]), F.emp, v => { toggleIn(F.emp, v); changed(); }, cnt("emp", (j, v) => j.employment.includes(v)));
+  // 적용된 필터
+  const act = [];
+  if (F.company) act.push(["company", null, "기업: " + (COMPANIES[F.company]?.name || "")]);
+  F.sources.forEach(v => act.push(["sources", v, v]));
+  if (F.posted !== "all") act.push(["posted", null, "등록 " + POSTED_OPTS.find(o => o[0] === F.posted)[1]]);
+  if (F.deadline !== "all") act.push(["deadline", null, "마감 " + DEADLINE_OPTS.find(o => o[0] === F.deadline)[1]]);
+  F.exp.forEach(v => act.push(["exp", v, EXP_OPTS.find(o => o[0] === v)[1]]));
+  F.regions.forEach(v => act.push(["regions", v, v]));
+  F.edu.forEach(v => act.push(["edu", v, v]));
+  F.emp.forEach(v => act.push(["emp", v, v]));
+  if (F.withCo) act.push(["withCo", null, "기업정보 있는 공고"]);
+  if (F.multi) act.push(["multi", null, "직무명 없는 공고 포함"]);
+  $("#active").innerHTML = act.map(([k, v, label], i) => `<span class="chip">${esc(label)}<button type="button" data-i="${i}" aria-label="${esc(label)} 필터 빼기">×</button></span>`).join("");
+  $("#active").onclick = e => {
+    const b = e.target.closest("[data-i]"); if (!b) return;
+    const [k, v] = act[Number(b.dataset.i)];
+    if (v != null) toggleIn(F[k], v); else F[k] = DEFAULT_F()[k];
+    changed();
+  };
+  const nF = act.length;
+  $("#fcount").textContent = nF ? " " + nF : "";
+  renderList(true);
+  aiBatchStatus();
+}
+
+function jobCard(j){
+  const g = GCLS[groupOf(j)] || "";
+  const dd = ddayInfo(j);
+  const saved = Store.saved[j.id];
+  const c = compOf(j);
+  const role = roleOf(j);
+  const exp = j.expRaw || j.expType;
+  const ci = c ? [
+    c.avgSalary ? `평균연봉 <b>${fmt(c.avgSalary)}만</b>` : "",
+    c.employees ? `사원 <b>${fmt(c.employees)}명</b>` : "",
+    c.revenue ? `매출 <b>${eok(c.revenue)}</b>` : "",
+    c.years ? `업력 <b>${c.years}년</b>` : "",
+  ].filter(Boolean).join("") : "";
+  const ai = aiCache[j.id];
+  return `<article class="card ${g}" data-id="${esc(j.id)}">
+    <div class="card-top">
+      <span class="badge">${esc(groupOf(j))}</span>
+      <span class="tag">${esc(role)}${aiRoles[j.id] && aiRoles[j.id] !== NONE ? " · AI 확인" : ""}</span>
+      ${aiRoles[j.id] === NONE ? '<span class="tag">AI: 관련 직무 아님</span>' : aiRoles[j.id] ? "" : j.multi ? '<span class="tag">여러 직무 공채</span>' : j.broad ? '<span class="tag" title="제목에 직무명이 없고 사이트 직무 분류로만 잡힌 공고">분류 추정</span>' : ""}
+      <span class="dday ${dd.cls}">${esc(dd.txt)}</span>
+      ${isNew(j) ? '<span class="dday hot" title="최근 수집에서 처음 발견된 공고">NEW</span>' : ""}
+      <button class="star" type="button" data-act="star" aria-pressed="${!!saved}" aria-label="${saved ? "관심공고에서 빼기" : "관심공고에 저장"}">${saved ? STAR_ON : STAR_OFF}</button>
+    </div>
+    <h3><a href="${esc(j.listings[0].url)}" target="_blank" rel="noopener">${esc(j.title)}</a></h3>
+    <div class="corp">${c ? `<button type="button" data-act="company">${esc(j.company)}</button>` : `<span>${esc(j.company)}</span>`}${c?.industry ? `<span class="muted" style="font-size:12.5px">${esc(c.industry)}</span>` : ""}</div>
+    <div class="meta"><span>${esc(j.regionRaw || j.region)}</span><span>${esc(exp)}</span><span>${esc(j.education)}</span><span>${esc(j.employment.join("·"))}</span>${j.salary ? `<span>${esc(j.salary)}</span>` : ""}${j.deadline ? `<span>마감 ${esc(j.deadline.slice(5).replace("-", "."))}</span>` : ""}</div>
+    ${ci ? `<div class="cinfo">${ci}</div>` : ""}
+    ${ai ? aiBlock(ai) : ""}
+    <div class="card-foot">
+      ${j.listings.map(l => `<a class="src" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.source)} ↗</a>`).join("")}
+      <span>${j.publishedAt ? "등록 " + esc(j.publishedAt.slice(5).replace("-", ".")) : ""}</span>
+      <span class="sp"></span>
+      ${WEB ? "" : `<button class="btn ghost sm" type="button" data-act="ai" ${ai === "loading" ? "disabled" : ""}>${ai === "loading" ? "분석 중…" : ai ? "분석 다시" : "AI 분석"}</button>`}
+    </div>
+  </article>`;
+}
+function aiBlock(ai){
+  if (ai === "loading") return `<div class="ai-out"><span class="lbl">AI 분석</span><div>제목과 조건, 기업정보를 읽고 있어요…</div></div>`;
+  if (ai.error) return `<div class="ai-out"><span class="lbl">AI 분석</span><div>${esc(ai.error)}</div></div>`;
+  return `<div class="ai-out"><span class="lbl">AI 분석 · 원문은 읽지 않았어요</span><div>${esc(ai.summary)}</div>${ai.checks?.length ? `<ul>${ai.checks.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}</div>`;
+}
+
+function renderList(reset){
+  if (!JOBS.length) return;
+  const list = sortJobs(filterJobs(), F.sort);
+  $("#rcount").textContent = fmt(list.length);
+  const el = $("#list");
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><b>조건에 맞는 공고가 없어요</b>필터를 하나씩 빼보거나 상세 필터에서 '제목에 직무명이 없는 공고도 포함'을 켜보세요.</div>`;
+    $("#moreBtn").hidden = true; return;
+  }
+  el.innerHTML = list.slice(0, shown).map(jobCard).join("");
+  $("#moreBtn").hidden = list.length <= shown;
+  $("#moreBtn").textContent = `더 보기 (${fmt(list.length - shown)}건 남음)`;
+}
+
+function onCardClick(e){
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const card = b.closest("[data-id]"); const id = card?.dataset.id;
+  const j = JOBS.find(x => x.id === id) || null;
+  const act = b.dataset.act;
+  if (act === "star") toggleStar(id, j);
+  else if (act === "company" && j) { F = {...DEFAULT_F(), company: j.companyId, multi: true}; go("jobs"); changed(); toast(`${j.company}의 공고만 보여줘요`); }
+  else if (act === "ai" && j) analyze(j, card);
+}
+function snapshot(j){ return {title:j.title, company:j.company, deadline:j.deadline, url:j.listings[0].url, source:j.listings[0].source, roleGroup:groupOf(j), role:roleOf(j)}; }
+function toggleStar(id, j){
+  if (Store.saved[id]) { Store.delSaved(id); toast("관심공고에서 뺐어요"); }
+  else if (j) { const now = new Date().toISOString(); Store.putSaved(id, {status:"interest", memo:"", outcome:"", savedAt:now, updatedAt:now, job:snapshot(j)}); toast("관심공고에 저장했어요. 지원현황에서 관리할 수 있어요."); }
+  renderTabs();
+  if (view === "jobs") renderList(false); else renderView();
+}
+
+// ---------------------------------------------------------------- AI (Claude)
+let samplePromise = null;
+function getSample(){ if (!samplePromise) samplePromise = window.claude?.use ? claude.use("sample").catch(() => null) : Promise.resolve(null); return samplePromise; }
+function aiErr(e){
+  const c = e?.code;
+  if (c === "not_granted") return "AI 사용이 허용되지 않았어요. 이 페이지의 권한 메뉴에서 켤 수 있어요.";
+  if (c === "rate_limited") return "AI 사용량 한도에 닿았어요. 잠시 후 다시 눌러주세요.";
+  if (c === "invalid_json") return "AI 응답을 읽지 못했어요. 다시 눌러주세요.";
+  return "AI 분석을 하지 못했어요. 잠시 후 다시 눌러주세요.";
+}
+async function analyze(j, card){
+  const sample = await getSample();
+  if (!sample) { aiCache[j.id] = {error:"이 화면에서는 AI를 쓸 수 없어요. claude.ai에서 로그인한 상태로 열어주세요."}; rerenderCard(j); return; }
+  aiCache[j.id] = "loading"; rerenderCard(j);
+  const c = compOf(j);
+  const info = {
+    제목: j.title, 회사: j.company, 사이트직무분류: j.sectors.join(", "), 현재분류: j.roleGroup + " > " + roleOf(j),
+    지역: j.regionRaw, 경력: j.expRaw || j.expType, 학력: j.education, 고용형태: j.employment.join("·"),
+    마감: j.deadline || "상시/채용시", 여러직무공채: !!j.multi,
+    기업정보: c ? {업종: c.industry, 사원수: c.employees, 매출억원: c.revenue, 평균연봉만원: c.avgSalary, 업력년: c.years} : "없음",
+  };
+  const roles = ALL_ROLES.map(r => r.role).join(", ");
+  const prompt = `너는 법무·컴플라이언스·특허·감사 직무 채용 전문 커리어 코치야. 아래 채용공고 요약 정보만 보고(원문은 없음) 지원자가 빠르게 판단할 수 있게 분석해줘.
+과장하지 말고, 정보에 없는 내용은 추측이라고 표시해.
+
+공고 정보(JSON):
+${JSON.stringify(info, null, 1)}
+
+다음 JSON 객체 하나로만 답해:
+{"summary": "이 공고가 어떤 자리인지 한국어 2문장 (회사 규모·업종 맥락 포함)",
+ "role": "다음 중 가장 알맞은 세부 직무 하나: ${roles}",
+ "checks": ["지원 전에 원문에서 확인할 점 또는 준비할 점 3개, 각 40자 이내"]}`;
+  try {
+    const r = await sample.json(prompt, {modelTier: "quick"});
+    aiCache[j.id] = {summary: String(r.summary || ""), checks: Array.isArray(r.checks) ? r.checks.slice(0, 3).map(String) : []};
+    const valid = ALL_ROLES.find(x => x.role === r.role);
+    if (valid && (valid.role !== j.role || !confident(j))) { aiRoles[j.id] = valid.role; Store.putAiRoles(); }
+  } catch (e) { aiCache[j.id] = {error: aiErr(e)}; }
+  rerenderCard(j);
+}
+function rerenderCard(j){
+  const el = document.querySelector(`.card[data-id="${CSS.escape(j.id)}"]`);
+  if (el) el.outerHTML = jobCard(j);
+}
+
+function aiBatchStatus(){
+  if (WEB) { $("#aiField").hidden = true; return; }
+  const left = filterJobs({...F, multi: true}).filter(j => (j.broad || j.multi) && !aiRoles[j.id]).length;
+  const done = Object.keys(aiRoles).filter(id => JOBS.some(j => j.id === id && (j.broad || j.multi))).length;
+  $("#aiBatchNote").textContent = left ? `현재 조건에서 확인할 공고 ${fmt(left)}건 · 한 번에 40건씩 확인해요${done ? ` · 지금까지 ${fmt(done)}건 확인` : ""}` : "현재 조건의 분류 추정 공고를 모두 확인했어요.";
+  $("#aiBatch").disabled = !left || aiBusy;
+}
+let aiBusy = false;
+async function aiBatch(){
+  const sample = await getSample();
+  if (!sample) { toast("이 화면에서는 AI를 쓸 수 없어요. claude.ai에서 로그인한 상태로 열어주세요."); return; }
+  const todo = sortJobs(filterJobs({...F, multi: true}).filter(j => (j.broad || j.multi) && !aiRoles[j.id]), "new").slice(0, 40);
+  if (!todo.length) return;
+  aiBusy = true; $("#aiBatch").disabled = true; $("#aiBatch").textContent = `AI가 ${todo.length}건 확인 중…`;
+  const roles = ALL_ROLES.map(r => r.role).join(", ");
+  const lines = todo.map(j => `${j.id} | ${j.title} | ${j.company} | 사이트분류: ${j.sectors.join(", ")}`).join("\n");
+  const prompt = `아래는 채용공고 목록이야. 각 공고의 실제 주 업무가 법무·컴플라이언스·특허·감사 직무인지 판단해.
+판단 기준: 제목과 회사, 사이트 직무 분류를 함께 봐. 재무회계·총무·경영지원·비서·품질관리처럼 주 업무가 다른 공고는 사이트 분류에 법무·감사가 있어도 "해당없음"이야.
+여러 직무를 함께 뽑는 공채는 법무·감사 직무가 명시적으로 포함됐다고 볼 근거가 있을 때만 해당 직무로 분류해.
+특허사무소·법무법인의 행정 사무직은 각각 "특허·IP", "법무사·법률사무"로 분류해.
+
+세부 직무 목록: ${roles}
+
+공고(id | 제목 | 회사 | 사이트분류):
+${lines}
+
+JSON 배열로만 답해. 각 원소는 {"id": "공고 id", "role": "세부 직무 하나 또는 해당없음"}.`;
+  try {
+    const r = await sample.json(prompt, {modelTier: "quick"});
+    let ok = 0, none = 0;
+    (Array.isArray(r) ? r : []).forEach(x => {
+      const j = todo.find(t => t.id === x?.id); if (!j) return;
+      const v = ALL_ROLES.find(a => a.role === x.role);
+      if (v) { aiRoles[j.id] = v.role; ok++; } else { aiRoles[j.id] = NONE; none++; }
+    });
+    await Store.putAiRoles();
+    toast(`${ok}건은 관련 직무로 확인돼 목록에 추가했고, ${none}건은 관련 없는 공고라 숨겼어요.`);
+  } catch (e) { toast(aiErr(e)); }
+  aiBusy = false; $("#aiBatch").textContent = "분류 추정 공고 AI로 확인하기";
+  renderJobs();
+}
+
+// ---------------------------------------------------------------- 캘린더
+function renderCalendar(){
+  const [y, m] = calMonth.split("-").map(Number);
+  $("#h-cal").textContent = `${y}.${String(m).padStart(2, "0")}`;
+  $("#calMine").setAttribute("aria-pressed", calMine); $("#calAll").setAttribute("aria-pressed", !calMine);
+  const items = calItems();
+  const byDay = {};
+  items.forEach(it => { (byDay[it.deadline] ||= []).push(it); });
+  const first = `${calMonth}-01`;
+  const startDow = new Date(Date.parse(first + "T00:00:00Z")).getUTCDay();
+  const start = addDays(first, -startDow);
+  let html = ["일","월","화","수","목","금","토"].map(d => `<div class="dow">${d}</div>`).join("");
+  for (let i = 0; i < 42; i++) {
+    const d = addDays(start, i);
+    if (i >= 35 && d.slice(0, 7) !== calMonth) break;
+    const evs = byDay[d] || [];
+    const out = d.slice(0, 7) !== calMonth;
+    const evHtml = evs.slice(0, 3).map(it => `<span class="ev ${GCLS[it.roleGroupX || it.roleGroup] || ""} ${it.mine ? "mine" : ""}">${esc(it.company)}</span>`).join("");
+    const dots = evs.slice(0, 6).map(it => `<i class="${GCLS[it.roleGroupX || it.roleGroup] || ""}"></i>`).join("");
+    html += `<button type="button" class="day ${out ? "out" : ""} ${d === TODAY ? "today" : ""}" data-d="${d}" aria-pressed="${calDay === d}" aria-label="${d} 마감 ${evs.length}건">
+      <span class="d">${Number(d.slice(8))}</span>${evHtml}${evs.length > 3 ? `<span class="moreev">+${evs.length - 3}</span>` : ""}
+      <span class="dots">${dots}</span>${evs.length ? `<span class="cnum">${evs.length}</span>` : ""}</button>`;
+  }
+  $("#cal").innerHTML = html;
+  renderAgenda(byDay);
+}
+function calItems(){
+  if (calMine) return Object.entries(Store.saved).map(([id, s]) => {
+    const j = JOBS.find(x => x.id === id);
+    return j ? {...j, mine: true} : {...s.job, id, mine: true, listings: [{url: s.job.url, source: s.job.source}]};
+  }).filter(x => x.deadline);
+  return filterJobs().filter(j => j.deadline).map(j => ({...j, roleGroupX: groupOf(j), mine: !!Store.saved[j.id]}));
+}
+function renderAgenda(byDay){
+  const el = $("#agenda");
+  let days;
+  if (calDay) days = [calDay];
+  else days = Object.keys(byDay).filter(d => d >= TODAY).sort().slice(0, 7);
+  if (!days.length || days.every(d => !(byDay[d] || []).length)) {
+    el.innerHTML = `<div class="empty"><b>${calDay ? "이날 마감하는 공고가 없어요" : "다가오는 마감이 없어요"}</b>${calMine ? "☆로 관심공고를 저장하면 마감일이 여기에 표시돼요." : "검색 조건을 바꾸면 다른 공고의 마감일을 볼 수 있어요."}</div>`;
+    return;
+  }
+  el.innerHTML = days.map(d => {
+    const evs = byDay[d] || [];
+    const dd = dayDiff(d, TODAY);
+    return `<h3>${Number(d.slice(5, 7))}월 ${Number(d.slice(8))}일 <span class="sub num">${dd === 0 ? "D-day" : dd > 0 ? "D-" + dd : "마감"} · ${evs.length}건</span></h3>` +
+      `<div class="list">${evs.map(it => JOBS.find(x => x.id === it.id) ? jobCard(JOBS.find(x => x.id === it.id)) : savedOnlyCard(it)).join("")}</div>`;
+  }).join("");
+}
+function savedOnlyCard(it){
+  return `<article class="card ${GCLS[it.roleGroup] || ""}" data-id="${esc(it.id)}"><div class="card-top"><span class="badge">${esc(it.roleGroup)}</span><span class="tag">목록에서 내려간 공고</span>
+  <button class="star" type="button" data-act="star" aria-pressed="true" aria-label="관심공고에서 빼기">${STAR_ON}</button></div>
+  <h3><a href="${esc(it.listings[0].url)}" target="_blank" rel="noopener">${esc(it.title)}</a></h3><div class="corp"><span>${esc(it.company)}</span></div></article>`;
+}
+
+// ---------------------------------------------------------------- 지원현황 (칸반)
+function renderBoard(){
+  const items = Object.entries(Store.saved).map(([id, s]) => ({id, ...s}));
+  const el = $("#board");
+  if (!items.length) {
+    el.style.display = "block";
+    el.innerHTML = `<div class="empty"><b>아직 저장한 공고가 없어요</b>공고 카드의 ☆를 누르면 '관심' 칸에 들어와요. 지원하면 '지원 완료'로 옮기고 메모를 남겨보세요.<div style="margin-top:12px"><button class="btn primary" type="button" data-goto="jobs">공고 보러 가기</button></div></div>`;
+    return;
+  }
+  el.style.display = "";
+  el.innerHTML = STATUSES.map((s, si) => {
+    const list = items.filter(it => (it.status || "interest") === s.k).sort((a, b) => (a.job?.deadline || "9999").localeCompare(b.job?.deadline || "9999"));
+    return `<section class="col" data-status="${s.k}" style="--cc:${s.c}" aria-label="${s.label}">
+      <div class="col-h"><i></i>${s.label}<span class="num">${list.length}</span></div>
+      ${list.map(it => kcard(it, si)).join("") || `<p class="note" style="margin:4px">여기로 끌어다 놓으세요</p>`}
+    </section>`;
+  }).join("");
+}
+function kcard(it, si){
+  const j = it.job || {};
+  const dd = j.deadline ? ddayInfo(j) : {txt:"상시", cls:""};
+  const oc = it.status === "result" && it.outcome ? `<span class="outcome ${it.outcome === "합격" ? "pass" : it.outcome === "불합격" ? "fail" : "wait"}">${esc(it.outcome)}</span>` : "";
+  return `<article class="kcard" draggable="true" data-kid="${esc(it.id)}">
+    <div class="t">${esc(j.title)}</div>
+    <div class="c">${esc(j.company)}</div>
+    ${it.memo ? `<div class="memo">${esc(it.memo)}</div>` : ""}
+    <div class="row"><span class="dday ${dd.cls}">${esc(dd.txt)}</span>${oc}
+      <span class="mv"><button type="button" data-mv="-1" aria-label="이전 단계로" ${si === 0 ? "disabled" : ""}>‹</button><button type="button" data-mv="1" aria-label="다음 단계로" ${si === STATUSES.length - 1 ? "disabled" : ""}>›</button></span></div>
+  </article>`;
+}
+function moveCard(id, status){
+  const it = Store.saved[id]; if (!it || it.status === status) return;
+  const v = {...it, status, updatedAt: new Date().toISOString()};
+  if (status === "applied" && !v.appliedAt) v.appliedAt = TODAY;
+  Store.putSaved(id, v); renderBoard(); renderTabs();
+}
+function openDrawer(id){
+  const it = Store.saved[id]; if (!it) return;
+  const j = it.job || {};
+  const live = JOBS.find(x => x.id === id);
+  $("#layer").innerHTML = `<div class="scrim" data-close style="position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:54"></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle">
+    <button class="btn ghost sm x" type="button" data-close>닫기</button>
+    <div><span class="badge ${GCLS[j.roleGroup] || ""}">${esc(j.roleGroup)}</span></div>
+    <h2 id="dtitle" style="font-size:18px">${esc(j.title)}</h2>
+    <div class="corp"><span>${esc(j.company)}</span></div>
+    <div class="meta">${live ? `<span>${esc(live.regionRaw)}</span><span>${esc(live.expRaw || live.expType)}</span>` : ""}<span>${j.deadline ? "마감 " + esc(j.deadline) : "상시 채용"}</span></div>
+    <div><a class="btn" href="${esc(j.url)}" target="_blank" rel="noopener">원문에서 보기 (${esc(j.source)}) ↗</a></div>
+    <div class="field"><span class="flabel">진행 단계</span>
+      <div class="steps" id="dsteps">${STATUSES.map(s => `<button type="button" data-st="${s.k}" aria-pressed="${(it.status || "interest") === s.k}">${s.label}</button>`).join("")}</div></div>
+    <div class="field" id="doutWrap" ${it.status === "result" ? "" : "hidden"}><span class="flabel">결과</span>
+      <div class="steps" id="dout">${["합격","불합격","보류"].map(o => `<button type="button" data-oc="${o}" aria-pressed="${it.outcome === o}">${o}</button>`).join("")}</div></div>
+    <div class="field"><label for="dmemo">메모</label>
+      <textarea id="dmemo" placeholder="지원 경로, 담당자, 면접 일정, 준비할 것 등">${esc(it.memo || "")}</textarea>
+      <span class="note" id="dsaved">입력하면 자동으로 저장돼요.</span></div>
+    ${it.appliedAt ? `<p class="note" style="margin:0">지원일 ${esc(it.appliedAt)} · 저장일 ${esc((it.savedAt || "").slice(0, 10))}</p>` : `<p class="note" style="margin:0">저장일 ${esc((it.savedAt || "").slice(0, 10))}</p>`}
+    <div style="margin-top:auto"><button class="btn" type="button" id="dremove" style="color:var(--hot)">관심공고에서 삭제</button></div>
+  </aside>`;
+  const close = () => { $("#layer").innerHTML = ""; renderView(); };
+  $("#layer").querySelectorAll("[data-close]").forEach(b => b.onclick = close);
+  $("#dsteps").onclick = e => { const b = e.target.closest("[data-st]"); if (!b) return; moveCard(id, b.dataset.st);
+    $("#dsteps").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); $("#doutWrap").hidden = b.dataset.st !== "result"; };
+  $("#dout").onclick = e => { const b = e.target.closest("[data-oc]"); if (!b) return;
+    Store.putSaved(id, {...Store.saved[id], outcome: b.dataset.oc, updatedAt: new Date().toISOString()});
+    $("#dout").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); };
+  const saveMemo = debounce(v => { Store.putSaved(id, {...Store.saved[id], memo: v, updatedAt: new Date().toISOString()}); $("#dsaved").textContent = "저장했어요"; }, 600);
+  $("#dmemo").oninput = e => { $("#dsaved").textContent = "저장 중…"; saveMemo(e.target.value); };
+  $("#dremove").onclick = () => { Store.delSaved(id); close(); toast("삭제했어요"); renderTabs(); };
+  document.addEventListener("keydown", function esc_(e){ if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc_); } });
+  $("#dmemo").focus();
+}
+
+// ---------------------------------------------------------------- 기업정보
+function renderCompanies(){
+  const all = Object.values(COMPANIES);
+  
+  const q = coQ.trim().toLowerCase();
+  let list = all.filter(c => !q || (c.name + " " + (c.industry || "")).toLowerCase().includes(q));
+  list.forEach(c => c._jobs = JOBS.filter(j => j.companyId === c.id).length);
+  const key = coSort === "jobCount" ? "_jobs" : coSort;
+  list.sort((a, b) => (b[key] || 0) - (a[key] || 0));
+  $("#coSub").textContent = `공고를 낸 기업 ${fmt(all.length)}곳`;
+  $("#coSort").value = coSort; $("#coQ").value = coQ;
+  const cols = [["name","회사"],["industry","업종"],["revenue","매출액"],["employees","사원 수"],["avgSalary","평균연봉"],["years","업력"],["jobCount","공고"]];
+  $("#coTable").innerHTML = `<thead><tr>${cols.map(([k, l]) => {
+      const n = !["name","industry"].includes(k);
+      return `<th class="${n ? "n" : ""}" scope="col">${n ? `<button type="button" data-sort="${k}" ${coSort === k ? 'aria-sort="descending"' : ""}>${l}${coSort === k ? " ↓" : ""}</button>` : l}</th>`;
+    }).join("")}</tr></thead><tbody>${list.slice(0, 300).map(c => `<tr>
+      <td><button type="button" class="cname" data-co="${esc(c.id)}">${esc(c.name)}</button></td>
+      <td class="muted" style="max-width:220px;overflow:hidden;text-overflow:ellipsis">${esc(c.industry || "")}</td>
+      <td class="n">${c.revenue ? eok(c.revenue) : '<span class="muted">-</span>'}</td>
+      <td class="n">${c.employees ? fmt(c.employees) + "명" : '<span class="muted">-</span>'}</td>
+      <td class="n">${c.avgSalary ? fmt(c.avgSalary) + "만" : '<span class="muted">-</span>'}</td>
+      <td class="n">${c.years ? c.years + "년" : '<span class="muted">-</span>'}</td>
+      <td class="n">${c._jobs}</td></tr>`).join("")}</tbody>`;
+  $("#coCards").innerHTML = list.slice(0, 120).map(c => `<article class="ccard">
+    <div><button type="button" class="cname" data-co="${esc(c.id)}" style="border:0;background:none;padding:0;font-weight:600;font-size:15px;text-align:left">${esc(c.name)}</button>
+    <div class="sub">${esc(c.industry || "")}</div></div>
+    <div class="grid"><div><span>매출액</span><b>${c.revenue ? eok(c.revenue) : "-"}</b></div><div><span>평균연봉</span><b>${c.avgSalary ? fmt(c.avgSalary) + "만원" : "-"}</b></div>
+    <div><span>사원 수</span><b>${c.employees ? fmt(c.employees) + "명" : "-"}</b></div><div><span>업력 · 공고</span><b>${c.years ? c.years + "년" : "-"} · ${c._jobs}건</b></div></div>
+  </article>`).join("") || `<div class="empty"><b>찾는 기업이 없어요</b>다른 이름으로 검색해보세요.</div>`;
+  $("#coNote").textContent = `출처: 사람인 기업정보 (사원 수는 국민연금 가입자 기준, 평균연봉은 사람인 추정치). 실제와 다를 수 있으니 참고용으로 보세요.${list.length > 300 ? " 표에는 상위 300곳만 보여요." : ""}`;
+}
+
+// ---------------------------------------------------------------- 저장한 검색
+function describeF(f){
+  const parts = [];
+  if (f.q) parts.push(`"${f.q}"`);
+  if (f.company) parts.push("기업: " + (COMPANIES[f.company]?.name || "?"));
+  if (f.groups.length) parts.push(f.groups.join("·"));
+  if (f.roles.length) parts.push(f.roles.join("·"));
+  if (f.sources.length) parts.push(f.sources.join("·"));
+  if (f.exp.length) parts.push(f.exp.map(v => EXP_OPTS.find(o => o[0] === v)?.[1]).join("·"));
+  if (f.regions.length) parts.push(f.regions.join("·"));
+  if (f.edu.length) parts.push(f.edu.join("·"));
+  if (f.emp.length) parts.push(f.emp.join("·"));
+  if (f.posted !== "all") parts.push("등록 " + POSTED_OPTS.find(o => o[0] === f.posted)[1]);
+  if (f.deadline !== "all") parts.push("마감 " + DEADLINE_OPTS.find(o => o[0] === f.deadline)[1]);
+  if (f.withCo) parts.push("기업정보 있음");
+  return parts.join(" · ") || "전체 공고";
+}
+function newCount(s){
+  if (!JOBS.length || !s?.f) return 0;
+  const seen = Date.parse(s.lastSeen || "") || 0;
+  const f = {...DEFAULT_F(), ...s.f, posted: "all"};
+  return filterJobs(f).filter(j => seenAt(j) > seen).length;
+}
+function renderSearches(){
+  const list = Object.entries(Store.searches).map(([id, s]) => ({id, ...s})).sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+  const el = $("#searches");
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><b>저장한 검색이 없어요</b>공고 화면에서 원하는 조건(예: 컴플라이언스 · 서울 · 경력 3~5년)을 고른 뒤 '이 조건 저장'을 누르세요. 다음에 들어오면 그 뒤로 새로 올라온 공고 수를 알려드려요.
+      <div style="margin-top:12px"><button class="btn primary" type="button" data-goto="jobs">조건 고르러 가기</button></div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const f = {...DEFAULT_F(), ...s.f};
+    const total = filterJobs(f).length;
+    const nw = newCount(s);
+    return `<article class="scard" data-sid="${esc(s.id)}">
+      <div class="row"><b style="font-size:16px">${esc(s.name)}</b>${nw ? `<span class="newb">새 공고 ${fmt(nw)}</span>` : ""}<span style="flex:1"></span>
+        <button class="btn ghost sm" type="button" data-sact="del" aria-label="${esc(s.name)} 삭제">삭제</button></div>
+      <div class="sub">${esc(describeF(f))}</div>
+      <div class="row"><span class="sub">지금 <b class="num" style="color:var(--ink)">${fmt(total)}</b>건 · 마지막 확인 ${esc(s.lastSeen ? new Date(s.lastSeen).toLocaleString("ko-KR", {month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit"}) : "-")}</span><span style="flex:1"></span>
+        <button class="btn primary sm" type="button" data-sact="open">공고 보기</button></div>
+    </article>`;
+  }).join("");
+}
+function saveSearchUI(){
+  const name = describeF(F).slice(0, 40);
+  $("#layer").innerHTML = `<div class="scrim" data-close style="position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:54"></div>
+  <form class="drawer" role="dialog" aria-modal="true" aria-labelledby="stitle" id="sform" style="height:auto;bottom:auto;top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(420px,calc(100% - 32px));border-radius:14px;padding:18px">
+    <h2 id="stitle" style="font-size:18px">이 조건 저장</h2>
+    <p class="sub" style="margin:0">${esc(describeF(F))}</p>
+    <div class="field"><label for="sname">이름</label><input type="text" id="sname" value="${esc(name)}" maxlength="40" required></div>
+    <p class="note" style="margin:0">저장한 뒤로 이 조건에 새 공고가 올라오면 '저장한 검색' 탭에 숫자로 표시돼요.</p>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-close>취소</button><button class="btn primary" type="submit">저장</button></div>
+  </form>`;
+  const close = () => { $("#layer").innerHTML = ""; };
+  $("#layer").querySelectorAll("[data-close]").forEach(b => b.onclick = close);
+  $("#sform").onsubmit = e => {
+    e.preventDefault();
+    const f = JSON.parse(JSON.stringify(F)); delete f.sort;
+    Store.putSearch(sid(), {name: $("#sname").value.trim() || name, f, createdAt: new Date().toISOString(), lastSeen: new Date().toISOString()});
+    close(); toast("저장했어요. '저장한 검색' 탭에서 볼 수 있어요."); renderTabs();
+  };
+  $("#sname").select();
+}
+
+// ---------------------------------------------------------------- 이벤트
+function bind(){
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-view]"); if (t) { go(t.dataset.view); return; }
+    const g2 = e.target.closest("[data-goto]"); if (g2) { go(g2.dataset.goto); return; }
+  });
+  $("#q").addEventListener("input", debounce(e => { F.q = e.target.value; changed(); }, 180));
+  $("#groups").onclick = e => { const b = e.target.closest("[data-g]"); if (!b) return; toggleIn(F.groups, b.dataset.g);
+    const allowed = GROUPS.filter(g => !F.groups.length || F.groups.includes(g.k)).flatMap(g => g.roles); F.roles = F.roles.filter(r => allowed.includes(r)); changed(); };
+  $("#roles").onclick = e => { const b = e.target.closest("[data-r]"); if (!b) return; toggleIn(F.roles, b.dataset.r); changed(); };
+  $("#sort").onchange = e => { F.sort = e.target.value; changed(); };
+  $("#f-withco").onchange = e => { F.withCo = e.target.checked; changed(); };
+  $("#f-multi").onchange = e => { F.multi = e.target.checked; changed(); };
+  $("#reset").onclick = () => { const q = F.q; F = DEFAULT_F(); F.q = q; changed(); };
+  $("#moreBtn").onclick = () => { shown += PAGE; renderList(false); };
+  $("#list").addEventListener("click", onCardClick);
+  $("#agenda").addEventListener("click", onCardClick);
+  $("#saveSearch").onclick = saveSearchUI;
+  $("#aiBatch").onclick = aiBatch;
+  $("#shareBtn").onclick = async () => {
+    setHash();
+    const url = location.href;
+    try { await navigator.clipboard.writeText(url); toast("현재 조건이 담긴 링크를 복사했어요"); }
+    catch { toast("주소창의 링크를 복사하면 같은 조건으로 열려요"); }
+  };
+  // 필터 시트 (모바일)
+  const sheet = $("#filters");
+  const openSheet = () => { sheet.classList.add("open"); const s = document.createElement("div"); s.className = "scrim"; s.id = "fscrim"; s.onclick = closeSheet; document.body.append(s); };
+  const closeSheet = () => { sheet.classList.remove("open"); $("#fscrim")?.remove(); };
+  $("#openFilters").onclick = openSheet; $("#closeFilters").onclick = closeSheet;
+  // 캘린더
+  $("#calPrev").onclick = () => { const [y, m] = calMonth.split("-").map(Number); const d = new Date(Date.UTC(y, m - 2, 1)); calMonth = d.toISOString().slice(0, 7); calDay = null; renderCalendar(); };
+  $("#calNext").onclick = () => { const [y, m] = calMonth.split("-").map(Number); const d = new Date(Date.UTC(y, m, 1)); calMonth = d.toISOString().slice(0, 7); calDay = null; renderCalendar(); };
+  $("#calToday").onclick = () => { calMonth = TODAY.slice(0, 7); calDay = null; renderCalendar(); };
+  $("#calMine").onclick = () => { calMine = true; calDay = null; renderCalendar(); };
+  $("#calAll").onclick = () => { calMine = false; calDay = null; renderCalendar(); };
+  $("#cal").onclick = e => { const b = e.target.closest("[data-d]"); if (!b) return; calDay = calDay === b.dataset.d ? null : b.dataset.d; renderCalendar(); };
+  // 칸반
+  const board = $("#board");
+  board.addEventListener("click", e => {
+    const mv = e.target.closest("[data-mv]");
+    const card = e.target.closest("[data-kid]");
+    if (mv && card) { e.stopPropagation(); const it = Store.saved[card.dataset.kid]; const i = STATUSES.findIndex(s => s.k === (it.status || "interest")) + Number(mv.dataset.mv);
+      if (STATUSES[i]) moveCard(card.dataset.kid, STATUSES[i].k); return; }
+    if (card) openDrawer(card.dataset.kid);
+  });
+  board.addEventListener("dragstart", e => { const c = e.target.closest("[data-kid]"); if (!c) return; c.classList.add("dragging"); e.dataTransfer.setData("text/plain", c.dataset.kid); e.dataTransfer.effectAllowed = "move"; });
+  board.addEventListener("dragend", e => { e.target.closest("[data-kid]")?.classList.remove("dragging"); board.querySelectorAll(".drop").forEach(x => x.classList.remove("drop")); });
+  board.addEventListener("dragover", e => { const col = e.target.closest("[data-status]"); if (!col) return; e.preventDefault(); board.querySelectorAll(".drop").forEach(x => x !== col && x.classList.remove("drop")); col.classList.add("drop"); });
+  board.addEventListener("drop", e => { const col = e.target.closest("[data-status]"); if (!col) return; e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (id) moveCard(id, col.dataset.status); });
+  // 기업정보
+  $("#coQ").addEventListener("input", debounce(e => { coQ = e.target.value; renderCompanies(); }, 180));
+  $("#coSort").onchange = e => { coSort = e.target.value; renderCompanies(); };
+  $("#coTable").onclick = e => { const s = e.target.closest("[data-sort]"); if (s) { coSort = s.dataset.sort; renderCompanies(); return; } openCompany(e); };
+  $("#coCards").onclick = openCompany;
+  function openCompany(e){ const b = e.target.closest("[data-co]"); if (!b) return; F = {...DEFAULT_F(), company: b.dataset.co, multi: true}; shown = PAGE; go("jobs"); }
+  // 저장한 검색
+  $("#searches").onclick = e => {
+    const b = e.target.closest("[data-sact]"); if (!b) return;
+    const id = b.closest("[data-sid]").dataset.sid; const s = Store.searches[id];
+    if (b.dataset.sact === "del") { Store.delSearch(id); renderSearches(); renderTabs(); toast("삭제했어요"); }
+    else { F = {...DEFAULT_F(), ...s.f, sort: "new"}; const nw = newCount(s); Store.putSearch(id, {...s, lastSeen: new Date().toISOString()}); shown = PAGE; go("jobs"); if (nw) toast(`새 공고 ${nw}건이 있어요 (최신순)`); }
+  };
+  window.addEventListener("hashchange", () => { const v = readHash(); if (v !== view || v === "jobs") { view = v; document.querySelectorAll(".view").forEach(s => s.hidden = s.id !== "v-" + v); renderTabs(); renderView(); } });
+}
+
+// ---------------------------------------------------------------- 시작
+async function boot(){
+  bind();
+  view = readHash();
+  document.querySelectorAll(".view").forEach(s => s.hidden = s.id !== "v-" + view);
+  renderTabs(); renderSync();
+  try {
+    const [jr, cr] = await Promise.all([fetch("data/jobs.json"), fetch("data/companies.json")]);
+    const jd = await jr.json(); const cd = cr.ok ? await cr.json() : {companies: []};
+    META = jd.meta || {}; JOBS = (jd.jobs || []).filter(j => !j.deadline || j.deadline >= TODAY);
+    COMPANIES = Object.fromEntries((cd.companies || []).map(c => [c.id, c]));
+  } catch (e) {
+    $("#list").innerHTML = `<div class="empty"><b>공고를 불러오지 못했어요</b>페이지를 새로고침해 주세요.</div>`; return;
+  }
+  const at = META.collectedAt ? META.collectedAt.slice(5, 16).replace("T", " ").replace("-", ".") : "";
+  $("#fresh").textContent = `${(META.sources || []).map(s => s.name).join("·")} · ${at} 수집${META.newThisRun ? ` · 새 공고 ${fmt(META.newThisRun)}건` : ""}`;
+  $("#foot").innerHTML = `공고 ${fmt(JOBS.length)}건 · 사람인·잡코리아·인크루트 공개 검색 목록의 요약 정보예요 (수집 ${esc(at)}, 한국 시간). 상세 내용 확인과 지원은 각 사이트 원문에서 하세요. 관심공고, 지원현황, 메모는 나만 볼 수 있어요.`;
+  renderTabs(); renderView();
+  Store.init();
+}
+boot();
+})();
+</script>
