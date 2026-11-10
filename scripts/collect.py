@@ -187,7 +187,7 @@ def saramin_deadline(s):
     return None, s
 
 
-def collect_saramin(max_pages=6):
+def collect_saramin(max_pages=10):
     jobs = {}
     for group, codes in SARAMIN_CODES.items():
         for page in range(1, max_pages + 1):
@@ -237,7 +237,7 @@ JOBKOREA_KEYWORDS = ["법무", "사내변호사", "컴플라이언스", "준법�
 JK_TARGET_WORK = {"법무담당자", "변호사", "법무사", "변리사", "특허담당", "송무담당", "컴플라이언스", "감사", "내부감사", "준법감시", "법률사무원"}
 
 
-def collect_jobkorea(max_pages=4):
+def collect_jobkorea(max_pages=10):
     jobs = {}
     for kw in JOBKOREA_KEYWORDS:
         for page in range(1, max_pages + 1):
@@ -326,7 +326,7 @@ def incruit_deadline(s):
     return None
 
 
-def collect_incruit(max_pages=3):
+def collect_incruit(max_pages=6):
     jobs = {}
     for kw in INCRUIT_KEYWORDS:
         for page in range(max_pages):

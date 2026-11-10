@@ -142,6 +142,15 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .active .chip{background:var(--surface-2);border-color:transparent;color:var(--ink)}
 .active .chip button{border:0;background:none;padding:0;color:var(--ink-3);line-height:1;font-size:15px}
 .list{display:flex;flex-direction:column;gap:10px}
+.ext{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.ext .lbl{font-size:13px;color:var(--ink-2);margin-right:2px}
+.ext .lbl b{color:var(--ink)}
+.ext a,.ext button.go{font-size:13px;font-weight:500;border:1px solid var(--line-strong);border-radius:8px;padding:4px 10px;text-decoration:none;background:var(--surface);color:var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.ext a:hover,.ext button.go:hover{border-color:var(--ink-3)}
+.ext .kw{display:flex;gap:4px;flex-wrap:wrap}
+.ext .kw button{font-size:12px;border:0;border-radius:99px;padding:2px 9px;background:var(--surface-2);color:var(--ink-2)}
+.ext .kw button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.ext .note{flex-basis:100%;margin:2px 0 0}
 .more{display:flex;justify-content:center;margin-top:14px}
 
 /* 공고 카드 */
@@ -331,6 +340,7 @@ tr:last-child td{border-bottom:0}
           </select>
         </div>
         <div class="active" id="active"></div>
+        <div class="ext" id="ext"></div>
         <div class="list" id="list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
         <div class="more"><button class="btn" id="moreBtn" type="button" hidden>더 보기</button></div>
       </div>
@@ -709,6 +719,7 @@ function renderJobs(){
   };
   const nF = act.length;
   $("#fcount").textContent = nF ? " " + nF : "";
+  renderExt();
   renderList(true);
   aiBatchStatus();
 }
@@ -784,6 +795,37 @@ function toggleStar(id, j){
   else if (j) { const now = new Date().toISOString(); Store.putSaved(id, {status:"interest", memo:"", outcome:"", savedAt:now, updatedAt:now, job:snapshot(j)}); toast("관심공고에 저장했어요. 지원현황에서 관리할 수 있어요."); }
   renderTabs();
   if (view === "jobs") renderList(false); else renderView();
+}
+
+
+// ---------------------------------------------------------------- 다른 사이트에서 이어서 보기
+// 원티드·리멤버·캐치·링크드인·잡플래닛은 자동 수집을 막고 있어서, 같은 키워드로 그 사이트를 바로 여는 링크를 준다.
+const ROLE_KW = {"사내변호사":"사내변호사","법무 일반":"법무","송무·소송":"송무","법무사·법률사무":"법률사무원","준법감시":"컴플라이언스","공정거래":"공정거래","개인정보보호":"개인정보보호","AML":"AML",
+  "변리사":"변리사","특허·IP":"특허","특허명세사":"특허명세사","상표·디자인":"상표","내부감사":"내부감사","내부통제":"내부통제","회계감사":"회계감사","IT감사":"IT감사"};
+const EXT_SITES = [
+  {name:"원티드", url:k => `https://www.wanted.co.kr/search?query=${encodeURIComponent(k)}&tab=position`},
+  {name:"링크드인", url:k => `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(k)}&location=${encodeURIComponent("South Korea")}`},
+  {name:"잡플래닛", url:k => `https://www.jobplanet.co.kr/job/search?q=${encodeURIComponent(k)}`},
+  {name:"리멤버", url:() => "https://career.rememberapp.co.kr/job/postings", copy:true},
+  {name:"캐치", url:() => "https://www.catch.co.kr/", copy:true},
+];
+let extKw = null;
+function extKeywords(){
+  const out = [];
+  if (F.q.trim()) out.push(F.q.trim());
+  F.roles.forEach(r => out.push(ROLE_KW[r] || r));
+  if (!F.roles.length) (F.groups.length ? F.groups : ["법무","컴플라이언스","특허","감사"]).forEach(g => out.push(g));
+  return [...new Set(out)].slice(0, 6);
+}
+function renderExt(){
+  const kws = extKeywords();
+  if (!extKw || !kws.includes(extKw)) extKw = kws[0];
+  $("#ext").innerHTML = `<span class="lbl"><b>다른 사이트</b>에서 이어서 보기</span>
+    ${kws.length > 1 ? `<span class="kw" role="group" aria-label="검색어">${kws.map(k => `<button type="button" data-kw="${esc(k)}" aria-pressed="${k === extKw}">${esc(k)}</button>`).join("")}</span>` : `<span class="kw"><button type="button" aria-pressed="true" disabled>${esc(extKw)}</button></span>`}
+    ${EXT_SITES.map((x, i) => x.copy
+      ? `<a href="${esc(x.url(extKw))}" target="_blank" rel="noopener" data-copy="${esc(extKw)}">${esc(x.name)} ↗</a>`
+      : `<a href="${esc(x.url(extKw))}" target="_blank" rel="noopener">${esc(x.name)} ↗</a>`).join("")}
+    <p class="note">이 사이트들은 자동 수집을 막고 있어서 목록에 넣지 못해요. 누르면 내 브라우저에서 '${esc(extKw)}' 검색 결과가 열려요. 리멤버·캐치는 검색어를 복사해두니 검색창에 붙여넣으세요.</p>`;
 }
 
 // ---------------------------------------------------------------- AI (Claude)
@@ -1113,6 +1155,11 @@ function bind(){
   $("#reset").onclick = () => { const q = F.q; F = DEFAULT_F(); F.q = q; changed(); };
   $("#moreBtn").onclick = () => { shown += PAGE; renderList(false); };
   $("#list").addEventListener("click", onCardClick);
+  $("#ext").addEventListener("click", e => {
+    const k = e.target.closest("[data-kw]"); if (k) { extKw = k.dataset.kw; renderExt(); return; }
+    const c = e.target.closest("[data-copy]");
+    if (c) { const kw = c.dataset.copy; try { navigator.clipboard.writeText(kw).then(() => toast(`'${kw}'를 복사했어요. 검색창에 붙여넣으세요.`), () => {}); } catch {} }
+  });
   $("#agenda").addEventListener("click", onCardClick);
   $("#saveSearch").onclick = saveSearchUI;
   $("#aiBatch").onclick = aiBatch;
